@@ -81,36 +81,48 @@ class Socketer():
 		self.host = host
 		self.port = port
 		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.connected = False
+		self.socket.settimeout(5)
 	
+	def setRemote(self,host,port):
+		self.host=host
+		self.port=port
+    
 	def startServer(self):
 		self.socket.bind((self.host, self.port))
 		self.socket.listen(1)
 		self.conn, self.addr = self.socket.accept()
 		print 'Connected by', self.addr
 		while 1:
-			data = self.conn.recv(1024)
+			data = self.conn.recv(4096)
 			print data
 	
 	def stopServer(self):
 		self.conn.close()
 	
-	def sendData(self,data):
-		self.socket.connect((self.host, self.port))
-		self.socket.sendall(data)
-	
-	def receiveData(self):
+	def connect(self):
 		try:
 			self.socket.connect((self.host, self.port))
-			data = self.socket.recv(1024)
-			print 'Received: ', repr(data)
+			self.connected = True
 		except:
-			data = self.socket.recv(1024)
-			print 'Received: ', repr(data)
+			print "Connection error"
+    
+	def send(self,data):
+		if not self.connected: 
+			self.connect()
+		self.socket.sendall(data)
+	
+	def receive(self):
+		if not self.connected: 
+			self.connect()
+		data = self.socket.recv(4096)
+		return data
 	
 	def setProxy(self,host,port):
 		import socks
 		socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, host, port)
 		self.socket = socks.socksocket()
+		self.socket.settimeout(5)
 
 class Charsets():
 	def __init__(self):
@@ -119,7 +131,7 @@ class Charsets():
 		self.digits = "0123456789"
 		self.alphanumeric = self.digits + self.minuscules + self.majuscules  
 		self.alpha = self.majuscules + self.minuscules
-		self.all = "".join(chr(x) for x in range(0x20,ord("z") + 2))
+		self.all = "".join(chr(x) for x in range(0x20,ord("z") + 2)) + "\r\n"
 		self.hexadecimal = self.digits + "abcdef"
 		
 class Decoder():
