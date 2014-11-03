@@ -2,7 +2,6 @@ import urllib,httplib,urllib2,base64
 import socket
 import hashlib
 import fractions
-<<<<<<< HEAD
 import signal
 import sys
 from colorama import init,Fore, Back, Style
@@ -11,7 +10,7 @@ import traceback
 DEBUG = 3
 WARNING = 2
 ERROR = 1
-LOG_LEVEL = WARNING
+LOG_LEVEL = DEBUG
 
 class Colors():
     def __init__(self):
@@ -33,7 +32,7 @@ class Colors():
             return s
         
 class Debuger():
-    def __init__(self,debug=DEBUG):
+    def __init__(self,debug=LOG_LEVEL):
         self.count = 0
         self.max = 10
         self.signal = None
@@ -71,10 +70,7 @@ class Debuger():
     def log(self,log,level=DEBUG):
         if level <= self.dbg_level:
             print self.colors.color(log,level)
-        
-=======
 
->>>>>>> parent of cb64837... debuger class
 class Hasher():
     def md5(self,word):
         m = hashlib.md5()
