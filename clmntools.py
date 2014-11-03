@@ -1,29 +1,75 @@
-import urllib,urllib2,base64
+import urllib,httplib,urllib2,base64
 import socket
 import hashlib
 import fractions
 import signal
 import sys
+from colorama import init,Fore, Back, Style
+import traceback
 
-class Debuger():
+DEBUG = 3
+WARNING = 2
+ERROR = 1
+LOG_LEVEL = WARNING
+
+class Colors():
     def __init__(self):
+        init(autoreset=True)
+        self.HEADER = Fore.MAGENTA
+        self.OK = Fore.BLUE
+        self.DBG = Fore.GREEN
+        self.WARNING = Fore.YELLOW
+        self.ERROR = Fore.RED
+        
+    def color(self,s,c):
+        if c == DEBUG:
+            return self.DBG+"[DEBUG] "+s
+        if c == WARNING:
+            return self.WARNING+"[WARNING] "+s
+        if c == ERROR:
+            return self.ERROR+"[ERROR] "+s
+        else:
+            return s
+        
+class Debuger():
+    def __init__(self,debug=DEBUG):
         self.count = 0
         self.max = 10
         self.signal = None
+        self.dbg_level = debug
+        self.colors = Colors()
+        self.handles = []
+    
+    def setLevel(self,level):
+        self.dbg_level = level
+        if level == 3:
+            self.log('Debug level changed to DEBUG',DEBUG)
     
     def handler(self,signum, frame):
-        print 'Signal handler called with signal', signum, self.object
+        print 'Signal handler called with signal', signum
         self.count += 1
-        print '[DEBUG] Signal called %d time, %d remaining before quit' % (self.count, self.max-self.count)
+        self.log('Signal called %d time, %d remaining before quit' % (self.count, self.max-self.count),DEBUG)
+        for handle in self.handles:
+            handle.__call__()        
         if self.count == self.max:
-            print '[DEBUG] Now Quitting...'
+            print self.log('Now Quitting...',DEBUG)
             sys.exit()
 
-    def debug(self,handler=None):
+    def debug(self):
         self.object = object
-        h = self.handler
-        if handler: h = handler
-        self.signal = signal.signal(signal.SIGINT, h)
+        self.signal = signal.signal(signal.SIGINT, self.handler)
+        self.log("The debuger is started, press CTRL+C to see traces",DEBUG)
+
+    def add_handle(self,h):
+        if not hasattr(h, '__call__'):
+            self.log("The handle must be a function !", ERROR)
+        else:
+            self.handles.append(h)
+            self.log("The handle has been successfuly registered",DEBUG)
+        
+    def log(self,log,level=DEBUG):
+        if level <= self.dbg_level:
+            print self.colors.color(log,level)
         
 class Hasher():
     def md5(self,word):
@@ -77,18 +123,40 @@ class Generator():
     def next(self):
         self.current = self.update(self.current)
 
+    def debug(self):
+        print colors().color("[DEBUG] Generator currently at %s" % self.current,colors().DBG)
+
+ 
 class Browser():
     def __init__(self):
         self.opener = urllib2.build_opener()
         self.setCustomHeader("User-Agent","Mozilla/5.0 (Windows NT x.y; WOW64; rv:10.0) Gecko/20100101 Firefox/10.0")
     
+    # def setDebugLevel(self,d):
+        # handler=urllib2.HTTPHandler(debuglevel=d)
+        # self.opener = urllib2.build_opener(handler)
+        # self.setCustomHeader("User-Agent","Mozilla/5.0 (Windows NT x.y; WOW64; rv:10.0) Gecko/20100101 Firefox/10.0")
+    
+    def request(self,url,postdata=None):
+        page = ""
+        try:
+            page = self.opener.open(url,postdata)
+        except urllib2.HTTPError, e:
+            Debuger().log('HTTPError = ' + str(e.code), ERROR)
+        except urllib2.URLError, e:
+            Debuger().log('URLError = ' + str(e.reason), ERROR)
+        except httplib.HTTPException, e:
+            Debuger().log('HTTPException', ERROR)
+        except Exception:
+            Debuger().log('generic exception: ' + traceback.format_exc(), ERROR)
+        finally:
+            return page.read()
+    
     def get(self,url):
-        page = self.opener.open(url)
-        return page.read()
+        return self.request(url)
     
     def post(self,url,postdata=""):
-        page = self.opener.open(url,postdata)
-        return page.read()
+        return self.request(url,postdata)
     
     def setCookie(self,cookie):
         self.setCustomHeader('Cookie',cookie)
