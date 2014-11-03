@@ -1,225 +1,256 @@
-import urllib2,base64
+import urllib,urllib2,base64
 import socket
 import hashlib
 
 class Hasher():
-	def md5(self,word):
-		m = hashlib.md5()
-		m.update(word)
-		return m.hexdigest()
-	def sha1(self,word):
-		m = hashlib.sha1()
-		m.update(word)
-		return m.hexdigest()
+    def md5(self,word):
+        m = hashlib.md5()
+        m.update(word)
+        return m.hexdigest()
+    def sha1(self,word):
+        m = hashlib.sha1()
+        m.update(word)
+        return m.hexdigest()
 
+class Mathor():
+    def iterative_egcd(self, a, b):
+        x,y, u,v = 0,1, 1,0
+        while a != 0:
+            q,r = b//a,b%a; m,n = x-u*q,y-v*q
+            b,a, x,y, u,v = a,r, u,v, m,n
+        return b, x, y
+
+    def modinv(self, a, m):
+        g, x, y = self.iterative_egcd(a, m) 
+        if g != 1:
+            return None
+        else:
+            return x % m
+        
 class Generator():
-	def __init__(self,minimal_len=None,charset="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"):
-		self.charset = charset
-		self.current = charset[0]
-		self.len_min = minimal_len
-		if self.len_min:
-			self.current = charset[0]*self.len_min
-	
-	def update(self,mot):
-		taille = len(mot)
-		if mot == self.charset[-1]:
-			return self.charset[0]*2
-		if mot[taille-1] != self.charset[-1]:
-			tmp = [x for x in mot]
-			tmp[taille-1] = self.charset[self.charset.index(tmp[taille-1]) + 1]
-			return"".join(tmp)
-		else:
-			return self.update(mot[:len(mot)-1]) + self.charset[0]
-	
-	def next(self):
-		self.current = self.update(self.current)
+    def __init__(self,minimal_len=None,charset="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"):
+        self.charset = charset
+        self.current = charset[0]
+        self.len_min = minimal_len
+        if self.len_min:
+            self.current = charset[0]*self.len_min
+    
+    def update(self,mot):
+        taille = len(mot)
+        if mot == self.charset[-1]:
+            return self.charset[0]*2
+        if mot[taille-1] != self.charset[-1]:
+            tmp = [x for x in mot]
+            tmp[taille-1] = self.charset[self.charset.index(tmp[taille-1]) + 1]
+            return"".join(tmp)
+        else:
+            return self.update(mot[:len(mot)-1]) + self.charset[0]
+    
+    def next(self):
+        self.current = self.update(self.current)
 
 class Browser():
-	def __init__(self):
-		self.opener = urllib2.build_opener()
-		self.setCustomHeader("User-Agent","Mozilla/5.0 (Windows NT x.y; WOW64; rv:10.0) Gecko/20100101 Firefox/10.0")
-	
-	def get(self,url):
-		page = self.opener.open(url)
-		return page.read()
-	
-	def post(self,url,postdata=""):
-		page = self.opener.open(url,postdata)
-		return page.read()
-	
-	def setCookie(self,cookie):
-		self.setCustomHeader('Cookie',cookie)
-	
-	def setCustomHeader(self,header,value):
-		present = False
-		if self.opener.addheaders != []:
-			for h in self.opener.addheaders:
-				if h[0] == header:
-					present = True
-		if present: 
-			headers = list()
-			for h in self.opener.addheaders:	
-				if h[0] == header:
-					headers.append((header,value))
-				else:
-					headers.append((h[0],h[1]))
-			self.opener.addheaders = headers
-		else:
-			self.opener.addheaders.append((header,value))
-	
-	def setProxy(self,url,port):
-		proxy = urllib2.ProxyHandler({'http':url + ":" + str(port),'https':url + ":" + str(port)})
-		self.opener = urllib2.build_opener(proxy)
-		self.setCustomHeader("User-Agent","Mozilla/5.0 (Windows NT x.y; WOW64; rv:10.0) Gecko/20100101 Firefox/10.0")
-	
-	def basicAuthentication(self,username,password):
-		base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
-		self.setCustomHeader("Authorization", "Basic %s" % base64string)   
-		
+    def __init__(self):
+        self.opener = urllib2.build_opener()
+        self.setCustomHeader("User-Agent","Mozilla/5.0 (Windows NT x.y; WOW64; rv:10.0) Gecko/20100101 Firefox/10.0")
+    
+    def get(self,url):
+        page = self.opener.open(url)
+        return page.read()
+    
+    def post(self,url,postdata=""):
+        page = self.opener.open(url,postdata)
+        return page.read()
+    
+    def setCookie(self,cookie):
+        self.setCustomHeader('Cookie',cookie)
+    
+    def setCustomHeader(self,header,value):
+        present = False
+        if self.opener.addheaders != []:
+            for h in self.opener.addheaders:
+                if h[0] == header:
+                    present = True
+        if present: 
+            headers = list()
+            for h in self.opener.addheaders:    
+                if h[0] == header:
+                    headers.append((header,value))
+                else:
+                    headers.append((h[0],h[1]))
+            self.opener.addheaders = headers
+        else:
+            self.opener.addheaders.append((header,value))
+    
+    def setProxy(self,url,port):
+        proxy = urllib2.ProxyHandler({'http':url + ":" + str(port),'https':url + ":" + str(port)})
+        self.opener = urllib2.build_opener(proxy)
+        self.setCustomHeader("User-Agent","Mozilla/5.0 (Windows NT x.y; WOW64; rv:10.0) Gecko/20100101 Firefox/10.0")
+    
+    def basicAuthentication(self,username,password):
+        base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
+        self.setCustomHeader("Authorization", "Basic %s" % base64string)   
+        
 class Socketer():
-	def __init__(self,host="",port=6666):
-		self.host = host
-		self.port = port
-		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self.connected = False
-		self.socket.settimeout(5)
-	
-	def setRemote(self,host,port):
-		self.host=host
-		self.port=port
+    def __init__(self,host="",port=6666):
+        self.host = host
+        self.port = port
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connected = False
+        self.socket.settimeout(5)
     
-	def startServer(self):
-		self.socket.bind((self.host, self.port))
-		self.socket.listen(1)
-		self.conn, self.addr = self.socket.accept()
-		print 'Connected by', self.addr
-		while 1:
-			data = self.conn.recv(4096)
-			print data
-	
-	def stopServer(self):
-		self.conn.close()
-	
-	def connect(self):
-		try:
-			self.socket.connect((self.host, self.port))
-			self.connected = True
-		except:
-			print "Connection error"
+    def setRemote(self,host,port):
+        self.host=host
+        self.port=port
     
-	def send(self,data):
-		if not self.connected: 
-			self.connect()
-		self.socket.sendall(data)
-	
-	def receive(self):
-		if not self.connected: 
-			self.connect()
-		data = self.socket.recv(4096)
-		return data
-	
-	def setProxy(self,host,port):
-		import socks
-		socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, host, port)
-		self.socket = socks.socksocket()
-		self.socket.settimeout(5)
+    def startServer(self):
+        self.socket.bind((self.host, self.port))
+        self.socket.listen(1)
+        self.conn, self.addr = self.socket.accept()
+        print 'Connected by', self.addr
+        while 1:
+            data = self.conn.recv(4096)
+            print data
+    
+    def close(self):
+        self.socket.close()
+    
+    def connect(self):
+        try:
+            self.socket.connect((self.host, self.port))
+            self.connected = True
+        except:
+            print "Connection error"
+    
+    def send(self,data):
+        if not self.connected: 
+            self.connect()
+        self.socket.sendall(data)
+    
+    def receive(self):
+        if not self.connected: 
+            self.connect()
+        data = self.socket.recv(4096)
+        return data
+    
+    def setProxy(self,host,port):
+        import socks
+        socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, host, port)
+        self.socket = socks.socksocket()
+        self.socket.settimeout(5)
 
 class Charsets():
-	def __init__(self):
-		self.majuscules = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		self.minuscules = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".lower()
-		self.digits = "0123456789"
-		self.alphanumeric = self.digits + self.minuscules + self.majuscules  
-		self.alpha = self.majuscules + self.minuscules
-		self.all = "".join(chr(x) for x in range(0x20,ord("z") + 2)) + "\r\n"
-		self.hexadecimal = self.digits + "abcdef"
-		
+    def __init__(self):
+        self.majuscules = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        self.minuscules = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".lower()
+        self.digits = "0123456789"
+        self.alphanumeric = self.digits + self.minuscules + self.majuscules  
+        self.alpha = self.majuscules + self.minuscules
+        self.all = "".join(chr(x) for x in range(0x20,ord("z") + 2)) + "\r\n"
+        self.hexadecimal = self.digits + "abcdef"
+        
 class Decoder():
-	def b64encode(self, string):
-		return base64.b64encode(string)
-	
-	def b64decode(self, string):
-		return base64.b64decode(string)
-	
-	def hexencode(self,string):
-		s = ""
-		for i in string:
-			s += str(hex(ord(i))[2:])
-		return s
-	
-	def hexdecode(self,string):
-		s = ""
-		if (len(string) % 2) == 1:
-			print "Error: The string length is even"
-		for i in range(0,len(string),2):
-			s += chr(int(string[i:i+2],16))
-		return s
-	
-	def xor(self,string,key):
-		s = ""
-		for index,lettre in enumerate(string):
-			s += chr( ord(lettre)^ord(key[index%len(key)]) )
-		return s
-	
-	def base10toN(self,n, base, charset=None):
-		if not charset:
-			digits = "0123456789abcdefghijklmnopqrstuvwxyz"
-		else:	
-			digits = charset
-		try:
-			n = int(n)
-			base = int(base)
-		except:
-			return ""
+    def urlencode(self, string):
+        s = ""
+        for i in string:
+            if i not in Charsets().minuscules and i not in Charsets().majuscules:
+                zero = ""
+                if len(hex(ord(i))[2:]) == 1: zero = "0"
+                s += "%" + zero + hex(ord(i))[2:]
+            else:
+                s += i
+        return s
+    
+    def urldecode(self, string):
+        return urllib.urldecode(string)
+    
+    def b64encode(self, string):
+        return base64.b64encode(string)
+    
+    def b64decode(self, string):
+        return base64.b64decode(string)
+    
+    def hexencode(self,string):
+        s = ""
+        for i in string:
+            zero = ""
+            if len(hex(ord(i))[2:]) == 1: zero = "0"
+            s += zero + hex(ord(i))[2:]
+        return s
+    
+    def hexdecode(self,string):
+        s = ""
+        if (len(string) % 2) == 1:
+            print "Error: The string length is even"
+        for i in range(0,len(string),2):
+            s += chr(int(string[i:i+2],16))
+        return s
+    
+    def xor(self,string,key):
+        s = ""
+        for index,lettre in enumerate(string):
+            s += chr( ord(lettre)^ord(key[index%len(key)]) )
+        return s
+    
+    def base10toN(self,n, base, charset=None):
+        if not charset:
+            digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+        else:    
+            digits = charset
+        try:
+            n = int(n)
+            base = int(base)
+        except:
+            return ""
 
-		if n < 0 or base < 2 or base > 36:
-			return ""
+        if n < 0 or base < 2 or base > 36:
+            return ""
 
-		s = ""
-		while 1:
-			r = n % base
-			s = digits[r] + s
-			n = n / base
-			if n == 0:
-				break
-		return s
-	
-	def baseNto10(self,n,base, charset=None):
-		if not charset:
-			digits = "0123456789abcdefghijklmnopqrstuvwxyz"
-		else:	
-			digits = charset
-		try:
-			base = int(base)
-		except:
-			print "Error 1"
-			return
-			
-		if n < 0 or base < 2 or base > 36:
-			print "Error 1"
-			return
-		
-		n = n[::-1]
-		r = 0
-		for exposant,lettre in enumerate(n):
-			r += digits.index(lettre)*(base**exposant)
-		return r
-	
-	def baseNtoM(self,num,n,m, charset=None):
-		if not charset:
-			digits = "0123456789abcdefghijklmnopqrstuvwxyz"
-		else:	
-			digits = charset
-		try:
-			n = int(n)
-			m = int(m)
-		except:
-			return
-		
-		if n < 2 or n > 36 or m < 2 or m > 36:
-			return
-		
-		res = self.baseNto10(num,n,digits)
-		res = self.base10toN(res,m,digits)
-		return res
-		
+        s = ""
+        while 1:
+            r = n % base
+            s = digits[r] + s
+            n = n / base
+            if n == 0:
+                break
+        return s
+    
+    def baseNto10(self,n,base, charset=None):
+        if not charset:
+            digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+        else:    
+            digits = charset
+        try:
+            base = int(base)
+        except:
+            print "Error 1"
+            return
+            
+        if n < 0 or base < 2 or base > 36:
+            print "Error 1"
+            return
+        
+        n = n[::-1]
+        r = 0
+        for exposant,lettre in enumerate(n):
+            r += digits.index(lettre)*(base**exposant)
+        return r
+    
+    def baseNtoM(self,num,n,m, charset=None):
+        if not charset:
+            digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+        else:    
+            digits = charset
+        try:
+            n = int(n)
+            m = int(m)
+        except:
+            return
+        
+        if n < 2 or n > 36 or m < 2 or m > 36:
+            return
+        
+        res = self.baseNto10(num,n,digits)
+        res = self.base10toN(res,m,digits)
+        return res
+        
