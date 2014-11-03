@@ -13,15 +13,17 @@ class Hasher():
         return m.hexdigest()
 
 class Mathor():
-    def iterative_egcd(self, a, b):
-        x,y, u,v = 0,1, 1,0
-        while a != 0:
-            q,r = b//a,b%a; m,n = x-u*q,y-v*q
-            b,a, x,y, u,v = a,r, u,v, m,n
-        return b, x, y
+    def extended_gcd(aa, bb):
+        lastremainder, remainder = abs(aa), abs(bb)
+        x, lastx, y, lasty = 0, 1, 1, 0
+        while remainder:
+            lastremainder, (quotient, remainder) = remainder, divmod(lastremainder, remainder)
+            x, lastx = lastx - quotient*x, x
+            y, lasty = lasty - quotient*y, y
+        return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
 
     def modinv(self, a, m):
-        g, x, y = self.iterative_egcd(a, m) 
+        g, x, y = self.extended_gcd(a, m) 
         if g != 1:
             return None
         else:
