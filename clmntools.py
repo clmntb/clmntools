@@ -2,6 +2,7 @@ import urllib,httplib,urllib2,base64
 import socket
 import hashlib
 import fractions
+<<<<<<< HEAD
 import signal
 import sys
 from colorama import init,Fore, Back, Style
@@ -71,6 +72,9 @@ class Debuger():
         if level <= self.dbg_level:
             print self.colors.color(log,level)
         
+=======
+
+>>>>>>> parent of cb64837... debuger class
 class Hasher():
     def md5(self,word):
         m = hashlib.md5()
@@ -246,14 +250,6 @@ class Charsets():
         self.hexadecimal = self.digits + "abcdef"
         
 class Decoder():
-    def printable(self,i):
-        s = hex(i).strip("L")[2:]
-        s = self.hexdecode(s)
-        for i in s: 
-            if i not in Charsets().all:
-                return False
-        return True
-    
     def urlencode(self, string):
         s = ""
         for i in string:
