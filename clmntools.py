@@ -2,7 +2,29 @@ import urllib,urllib2,base64
 import socket
 import hashlib
 import fractions
+import signal
+import sys
 
+class Debuger():
+    def __init__(self):
+        self.count = 0
+        self.max = 10
+        self.signal = None
+    
+    def handler(self,signum, frame):
+        print 'Signal handler called with signal', signum, self.object
+        self.count += 1
+        print '[DEBUG] Signal called %d time, %d remaining before quit' % (self.count, self.max-self.count)
+        if self.count == self.max:
+            print '[DEBUG] Now Quitting...'
+            sys.exit()
+
+    def debug(self,handler=None):
+        self.object = object
+        h = self.handler
+        if handler: h = handler
+        self.signal = signal.signal(signal.SIGINT, h)
+        
 class Hasher():
     def md5(self,word):
         m = hashlib.md5()
@@ -156,6 +178,14 @@ class Charsets():
         self.hexadecimal = self.digits + "abcdef"
         
 class Decoder():
+    def printable(self,i):
+        s = hex(i).strip("L")[2:]
+        s = self.hexdecode(s)
+        for i in s: 
+            if i not in Charsets().all:
+                return False
+        return True
+    
     def urlencode(self, string):
         s = ""
         for i in string:
