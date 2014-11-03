@@ -1,3 +1,6 @@
+import urllib
+import base64
+
 class Generator():
     def __init__(self,minimal_len=None,charset="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"):
         self.charset = charset
@@ -22,7 +25,6 @@ class Generator():
 
     def debug(self):
         Debuger().log("Generator currently at %s" % self.current,DEBUG)
-
 
 
 class Charsets():

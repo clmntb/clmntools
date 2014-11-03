@@ -1,3 +1,7 @@
+import hashlib
+import fractions
+import socket
+
 class Hasher():
     def md5(self,word):
         m = hashlib.md5()

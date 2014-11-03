@@ -1,3 +1,9 @@
+import httplib
+import urllib2
+import socket
+import socks
+import traceback
+
 class Browser():
     def __init__(self):
         self.opener = urllib2.build_opener()
@@ -101,7 +107,6 @@ class Socketer():
         return data
     
     def setProxy(self,host,port):
-        import socks
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, host, port)
         self.socket = socks.socksocket()
         self.socket.settimeout(5)

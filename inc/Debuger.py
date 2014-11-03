@@ -1,3 +1,7 @@
+import signal
+from colorama import init,Fore, Back, Style
+import sys
+
 DEBUG = 3
 WARNING = 2
 ERROR = 1
