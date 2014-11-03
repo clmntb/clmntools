@@ -1,6 +1,7 @@
 import urllib,urllib2,base64
 import socket
 import hashlib
+import fractions
 
 class Hasher():
     def md5(self,word):
@@ -13,7 +14,7 @@ class Hasher():
         return m.hexdigest()
 
 class Mathor():
-    def extended_gcd(aa, bb):
+    def extended_gcd(self,aa, bb):
         lastremainder, remainder = abs(aa), abs(bb)
         x, lastx, y, lasty = 0, 1, 1, 0
         while remainder:
@@ -28,6 +29,9 @@ class Mathor():
             return None
         else:
             return x % m
+
+    def gcd(self,a,b):
+        return fractions.gcd(a, b)
         
 class Generator():
     def __init__(self,minimal_len=None,charset="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"):
