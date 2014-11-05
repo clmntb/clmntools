@@ -39,15 +39,7 @@ class Charsets():
 
 class Decoder():
     def urlencode(self, string):
-        s = ""
-        for i in string:
-            if i not in Charsets().minuscules and i not in Charsets().majuscules:
-                zero = ""
-                if len(hex(ord(i))[2:]) == 1: zero = "0"
-                s += "%" + zero + hex(ord(i))[2:]
-            else:
-                s += i
-        return s
+        return urllib.urlencode(string)
     
     def urldecode(self, string):
         return urllib.urldecode(string)
@@ -59,20 +51,10 @@ class Decoder():
         return base64.b64decode(string)
     
     def hexencode(self,string):
-        s = ""
-        for i in string:
-            zero = ""
-            if len(hex(ord(i))[2:]) == 1: zero = "0"
-            s += zero + hex(ord(i))[2:]
-        return s
+        return string.encode("hex")
     
     def hexdecode(self,string):
-        s = ""
-        if (len(string) % 2) == 1:
-            print "Error: The string length is even"
-        for i in range(0,len(string),2):
-            s += chr(int(string[i:i+2],16))
-        return s
+        return string.decode("hex")
     
     def xor(self,string,key):
         s = ""
