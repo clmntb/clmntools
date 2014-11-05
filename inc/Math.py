@@ -3,17 +3,24 @@ import fractions
 import socket
 
 class Hasher():
+    def __init__(self):
+        self.h = hashlib
+    
     def md5(self,word):
-        m = hashlib.md5()
+        m = self.h.md5()
         m.update(word)
         return m.hexdigest()
+
     def sha1(self,word):
-        m = hashlib.sha1()
+        m = self.h.sha1()
         m.update(word)
         return m.hexdigest()
 
 class Mathor():
-    def extended_gcd(self,aa, bb):
+    def gcd(self,a,b):
+        return fractions.gcd(a, b)
+
+    def egcd(self,aa, bb):
         lastremainder, remainder = abs(aa), abs(bb)
         x, lastx, y, lasty = 0, 1, 1, 0
         while remainder:
@@ -29,5 +36,3 @@ class Mathor():
         else:
             return x % m
 
-    def gcd(self,a,b):
-        return fractions.gcd(a, b)

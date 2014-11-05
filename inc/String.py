@@ -71,10 +71,12 @@ class Decoder():
             n = int(n)
             base = int(base)
         except:
-            return ""
+            Debuger().log("Number and base should be convertible to integer",ERROR)
+            return False 
 
         if n < 0 or base < 2 or base > 36:
-            return ""
+            Debuger().log("Number should be > 0 and base between 2 and 36",ERROR)
+            return False
 
         s = ""
         while 1:
@@ -93,12 +95,12 @@ class Decoder():
         try:
             base = int(base)
         except:
-            print "Error 1"
+            Debuger().log("Number should be convertible to integer",ERROR)
             return
             
         if n < 0 or base < 2 or base > 36:
-            print "Error 1"
-            return
+            Debuger().log("Number should be > 0 and base between 2 and 36",ERROR)
+            return False
         
         n = n[::-1]
         r = 0
@@ -115,10 +117,12 @@ class Decoder():
             n = int(n)
             m = int(m)
         except:
-            return
+            Debuger().log("Number and base should be convertible to integer",ERROR)
+            return False 
         
         if n < 2 or n > 36 or m < 2 or m > 36:
-            return
+            Debuger().log("Number should be > 0 and base between 2 and 36",ERROR)
+            return False
         
         res = self.baseNto10(num,n,digits)
         res = self.base10toN(res,m,digits)
