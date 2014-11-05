@@ -41,17 +41,16 @@ class Debuger():
             self.log('Debug level changed to DEBUG',DEBUG)
     
     def handler(self,signum, frame):
-        print 'Signal handler called with signal', signum
         self.count += 1
         self.log('Signal called %d time, %d remaining before quit' % (self.count, self.max-self.count),DEBUG)
         for handle in self.handles:
             handle.__call__()        
         if self.count == self.max:
-            print self.log('Now Quitting...',DEBUG)
+            print self.log('Exit...',DEBUG)
             sys.exit()
 
-    def debug(self):
-        self.object = object
+    def debug(self,level=DEBUG):
+        self.setLevel(level)
         self.signal = signal.signal(signal.SIGINT, self.handler)
         self.log("The debuger is started, press CTRL+C to see traces",DEBUG)
 
