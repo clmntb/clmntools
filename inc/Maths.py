@@ -1,6 +1,4 @@
-import hashlib
 import fractions
-import socket
 
 class Maths():
     def gcd(self,a,b):
@@ -16,7 +14,7 @@ class Maths():
         return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
 
     def modinv(self, a, m):
-        g, x, y = self.extended_gcd(a, m) 
+        g, x, y = self.egcd(a, m) 
         if g != 1:
             return None
         else:
