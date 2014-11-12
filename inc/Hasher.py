@@ -1,6 +1,8 @@
 import hashlib 
 import hmac
 
+from Debuger import *
+
 class Hasher():
     def md5(self,word):
         return hashlib.md5(word).hexdigest()

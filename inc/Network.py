@@ -4,6 +4,8 @@ import socket
 import socks
 import traceback
 
+from Debuger import *
+
 class Browser():
     def __init__(self):
         self.opener = urllib2.build_opener()
