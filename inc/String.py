@@ -18,7 +18,7 @@ class Generator():
         if mot[taille-1] != self.charset[-1]:
             tmp = [x for x in mot]
             tmp[taille-1] = self.charset[self.charset.index(tmp[taille-1]) + 1]
-            return"".join(tmp)
+            return "".join(tmp)
         else:
             return self.update(mot[:len(mot)-1]) + self.charset[0]
     

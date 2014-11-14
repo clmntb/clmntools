@@ -3,6 +3,8 @@ import urllib2
 import socket
 import socks
 import traceback
+import sys
+import string
 
 from Debuger import *
 
@@ -112,3 +114,34 @@ class Socketer():
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, host, port)
         self.socket = socks.socksocket()
         self.socket.settimeout(5)
+
+
+class IRCbot:
+    def __init__(self, host="", port=None, nick="clmntbot", ident="clmntbot", realname="clmntbot"):
+        self.HOST=host
+        self.PORT=port
+        self.NICK=nick
+        self.IDENT=ident
+        self.REALNAME=realname
+        self.readbuffer=""
+        self.s=Socketer(self.HOST, self.PORT)
+        self.s.connect()
+        print self.s.receive()
+        self.connect()
+        print self.s.receive()
+
+    def connect(self):    
+        self.s.send("NICK %s\r\n" % self.NICK)
+        self.s.send("USER %s %s bla :%s\r\n" % (self.IDENT, self.HOST, self.REALNAME))
+
+    def join(self,chan):
+        self.s.send("/join %s" % chan)
+        print self.s.receive()
+        print self.s.receive()
+    
+    def privateMsg(self,user,message):
+        self.s.send("/msg %s %s" % (user, message))
+        return self.s.receive()
+        
+    def quit(self):
+        self.s.send("/quit Leaving")
