@@ -25,6 +25,27 @@ class Maths():
         else:
             return x % m
 
+    def invertible(self,matrix):
+        """
+        Return True if a 2*2 matrix is inversible in Z26.
+        """
+        determinant = matrix[0][0] * matrix[1][1] - \
+                        matrix[1][0] * matrix[0][1]
+        return self.gcd(determinant, 26) == 1
+
+    def inverse_matrix(self,matrix):
+        """
+        Inverse a 2*2 matrix.
+        """
+        if not self.invertible(matrix):
+            return "Non invertible matrix"
+        result = [i[:] for i in matrix]
+        result[0][0] = matrix[1][1]
+        result[1][1] = matrix[0][0]
+        result[1][0] = (-matrix[1][0]) % 26
+        result[0][1] = (-matrix[0][1]) % 26
+        return result
+            
 class Analyzer():
     def __init__(self, ciphertext="", language="",nospace=False):
         self.ics = { "FR": 0.074, "EN": 0.0667, "DE": 0.0762, "ES": 0.0770, "IT": 0.0738, "RU": 0.0529 }
