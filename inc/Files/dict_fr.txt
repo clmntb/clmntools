@@ -1,5 +1,3 @@
-a
-à
 abaissa
 abaissable
 abaissables
@@ -335641,7 +335639,6 @@ xylophone
 xylophones
 xyste
 xystes
-y
 yacht
 yacht-club
 yacht-clubs

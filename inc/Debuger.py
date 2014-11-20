@@ -46,7 +46,7 @@ class Debuger():
         for handle in self.handles:
             handle.__call__()        
         if self.count == self.max:
-            print self.log('Exit...',DEBUG)
+            self.log('Exit...',DEBUG)
             sys.exit()
 
     def debug(self,level=DEBUG):
