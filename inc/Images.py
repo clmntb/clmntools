@@ -29,7 +29,7 @@ class Imager():
         self.width = self.image.size[0]
         self.height = self.image.size[1]
         self.pixels = self.image.load()
-        self.filename = "out." + self.image.format
+        self.filename = "out.png"
         return self.image
         
     def save(self,filename):
@@ -37,7 +37,9 @@ class Imager():
         self.image.format = extension
         self.image.save(filename)
     
-    def getLSB(self):
+    def getLSB(self, mask=None):
+        if not mask:
+            mask = 0x1
         if not self.pixels:
             print "You need first to load an image!"
             return False
@@ -46,7 +48,50 @@ class Imager():
             self.lsb.append([])
             for x in range(self.width):
                 pixel = self.pixels[x,y]
-                self.lsb[-1].append( (  pixel[0] & 0x1 , pixel[1] & 0x1 , pixel[2] & 0x1 ) ) 
+                self.lsb[-1].append( (  pixel[0] & mask , pixel[1] & mask , pixel[2] & mask ) ) 
+    
+    def readLSB(self, direction=None, mask=None):
+        if not direction:
+            direction = "GDHB"
+        if not mask:
+            mask = [(0,1,2)]
+        
+        index = 0
+        result = ""
+        
+        if direction in ["GDHB","DGBH"]:
+            for y in range(self.height):
+                for x in range(self.width):
+                    m = mask[index % len(mask)]
+                    result += "".join( str(self.lsb[y][x][i]) for i in m if i!=-1 )
+                    index+=1
+        
+        if direction in ["HBGD","BHDG"]:
+            for x in range(self.width):
+                for y in range(self.height):
+                    m = mask[index % len(mask)]
+                    result += "".join( str(self.lsb[y][x][i]) for i in m if i!=-1 )
+                    index+=1
+        
+        if direction in ["DGBH","BHDG"]:
+            result = result[::-1]
+            
+        return result
+        
+    def extract_colours(self):
+        if not self.pixels:
+            print "You need first to load an image!"
+            return False
+        self.colours = {}
+        for y in range(self.height):
+            for x in range(self.width):
+                pixel = self.pixels[x,y]
+                if repr(pixel) not in self.colours.keys():
+                    self.colours[repr(pixel)] = {}
+                    self.colours[repr(pixel)]["nb"] = 1
+                    self.colours[repr(pixel)]["position"] = len(self.colours.keys())
+                else:
+                    self.colours[repr(pixel)]["nb"] += 1
     
     def convert(self,extension):
         f = self.filename.split(".")[0]
