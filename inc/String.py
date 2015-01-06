@@ -1,5 +1,6 @@
 import urllib
 import base64
+import string
 
 from Debuger import *
 
@@ -40,29 +41,35 @@ class Charsets():
         self.hexadecimal = self.digits + "abcdef"
 
 class Decoder():
-    def urlencode(self, string):
-        return urllib.urlencode(string)
+    def urlencode(self, st):
+        return urllib.urlencode(st)
     
-    def urldecode(self, string):
-        return urllib.urldecode(string)
+    def urldecode(self, st):
+        return urllib.urldecode(st)
     
-    def b64encode(self, string):
-        return base64.b64encode(string)
+    def b64encode(self, st):
+        return base64.b64encode(st)
     
-    def b64decode(self, string):
-        return base64.b64decode(string)
+    def b64decode(self, st):
+        return base64.b64decode(st)
     
-    def hexencode(self,string):
-        return string.encode("hex")
+    def hexencode(self,st):
+        return st.encode("hex")
     
-    def hexdecode(self,string):
-        return string.decode("hex")
+    def hexdecode(self,st):
+        return st.decode("hex")
     
-    def xor(self,string,key):
+    def xor(self,st,key):
         s = ""
-        for index,lettre in enumerate(string):
+        for index,lettre in enumerate(st):
             s += chr( ord(lettre)^ord(key[index%len(key)]) )
         return s
+    
+    def rotN(self,st,n):
+         lc = string.lowercase
+         uc = string.uppercase
+         trans = string.maketrans(lc + uc, lc[n:] + lc[:n] + uc[n:] + uc[:n])
+         return string.translate(st, trans)
     
     def base10toN(self,n, base, charset=None):
         if not charset:
