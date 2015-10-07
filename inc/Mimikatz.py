@@ -86,9 +86,3 @@ class Mimikaz():
 
 
 
-m = Mimikaz()
-m.add_file("/home/cberland/Pentest/Olvea/passwords/mimikatz_exchange.log")
-m.parse()
-m.printCreds()
-m.exportWordlist("/home/cberland/Pentest/Olvea/wl/olvea_wordlist.txt")
-
