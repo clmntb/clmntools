@@ -9,7 +9,12 @@ from ..vendor.irclib import irclib
 from ..vendor.irclib import ircbot
 from ..vendor.pytesser import pytesser
 import math
-import Image
+
+try:
+    from PIL import Image
+except:
+    import Image
+
 import StringIO
 import subprocess
 
@@ -108,7 +113,8 @@ class Socketer():
             self.socket.connect((self.host, self.port))
             self.connected = True
         except:
-            print "Connection error"
+            "Connection error"
+            raise
     
     def send(self,data):
         if not self.connected: 

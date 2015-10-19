@@ -25,11 +25,11 @@ class Credential():
         return self.domain
 
     def __repr__(self):
-        return "Credential: %s\\%s : %s" % (self.domain,self.username,self.password)
+        return "%s\\%s : %s" % (self.domain,self.username,self.password)
 
 
 
-class Mimikaz():
+class Mimikatz():
     def __init__(self):
         self.creds = []
         self.unique_passwords = []

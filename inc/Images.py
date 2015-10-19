@@ -1,4 +1,8 @@
-import Image
+try:
+    from PIL import Image
+except:
+    import Image
+
 import StringIO
 import sys,os
 

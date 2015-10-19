@@ -5,6 +5,16 @@ from Debuger import *
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
+class SSLScanner():
+    def __init__(self,host="",port=443):
+        self.host = host
+        self.port = port
+
+
+
+
+
+
 class Maths():
     def gcd(self,a,b):
         return fractions.gcd(a, b)
